@@ -20,6 +20,15 @@ class MyReceiver : BroadcastReceiver() {
                     Toast.LENGTH_LONG
                 ).show()
             }
+            ACTION_CLICKED -> {
+                val count = intent.getIntExtra(COUNT, 0)
+                Toast.makeText(context, "Button was clicked $count times", Toast.LENGTH_LONG).show()
+            }
         }
+    }
+
+    companion object {
+        const val ACTION_CLICKED = "clicked"
+        const val COUNT = "count"
     }
 }
