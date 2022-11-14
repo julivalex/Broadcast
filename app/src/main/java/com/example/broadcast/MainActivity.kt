@@ -1,15 +1,25 @@
 package com.example.broadcast
 
+import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Button
+import android.widget.ProgressBar
 
 class MainActivity : AppCompatActivity() {
 
-    private val receiver = MyReceiver()
     private var count = 0
+
+    private val receiver = object : MyReceiver() {
+        override fun onReceive(context: Context?, intent: Intent?) {
+            if(intent?.action == MyService.ACTION_LOADED) {
+                val percent = intent.getIntExtra(MyService.EXTRA_PERCENT, 0)
+                findViewById<ProgressBar>(R.id.progressBar).progress = percent
+            }
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -21,13 +31,18 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        val intentFilter = IntentFilter()
-            .apply {
-                addAction(Intent.ACTION_AIRPLANE_MODE_CHANGED)
-                addAction(Intent.ACTION_BATTERY_LOW)
-                addAction(MyReceiver.ACTION_CLICKED)
-            }
-        registerReceiver(receiver, intentFilter)
+        IntentFilter().apply {
+            addAction(Intent.ACTION_AIRPLANE_MODE_CHANGED)
+            addAction(Intent.ACTION_BATTERY_LOW)
+            addAction(MyReceiver.ACTION_CLICKED)
+            addAction(MyService.ACTION_LOADED)
+            registerReceiver(receiver, this)
+        }
+
+
+        Intent(this, MyService::class.java).apply {
+            startService(this)
+        }
     }
 
     override fun onDestroy() {

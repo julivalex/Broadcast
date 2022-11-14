@@ -5,7 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.widget.Toast
 
-class MyReceiver : BroadcastReceiver() {
+open class MyReceiver : BroadcastReceiver() {
 
     override fun onReceive(context: Context?, intent: Intent?) {
         when (intent?.action) {
@@ -23,6 +23,10 @@ class MyReceiver : BroadcastReceiver() {
             ACTION_CLICKED -> {
                 val count = intent.getIntExtra(COUNT, 0)
                 Toast.makeText(context, "Button was clicked $count times", Toast.LENGTH_LONG).show()
+            }
+            MyService.ACTION_LOADED -> {
+                val percent = intent.getIntExtra(MyService.EXTRA_PERCENT, 0)
+                Toast.makeText(context, "Percent $percent", Toast.LENGTH_LONG).show()
             }
         }
     }
